@@ -10,6 +10,7 @@ use ic_stable_structures::{
     DefaultMemoryImpl,
 };
 
+const ONE_GB: u64 = 1_073_741_824;
 const WASM_PAGE_SIZE: u64 = 64 * 1024;
 
 #[derive(Debug, Clone, candid::CandidType, candid::Deserialize, serde::Serialize)]
@@ -112,8 +113,8 @@ fn _add_datum(datum: Snapshot) -> Result<(), String> {
 }
 
 // Status
-#[ic_cdk::query]
-#[candid::candid_method(query)]
+#[ic_cdk::update]
+#[candid::candid_method(update)]
 async fn status_all() -> CanisterStatusResponse {
     let canister_id = ic_cdk::api::id();
     canister_status(CanisterIdRecord { canister_id })
@@ -123,13 +124,23 @@ async fn status_all() -> CanisterStatusResponse {
 }
 #[ic_cdk::query]
 #[candid::candid_method(query)]
+fn status_used_heap_size() -> u64 {
+    get_heap_size()
+}
+#[ic_cdk::query]
+#[candid::candid_method(query)]
+fn status_used_heap_size_utilization() -> f64 {
+    status_used_heap_size() as f64 / (4 * ONE_GB) as f64
+}
+#[ic_cdk::query]
+#[candid::candid_method(query)]
 fn status_used_stable_memory() -> u64 {
     stable64_size() * WASM_PAGE_SIZE
 }
 #[ic_cdk::query]
 #[candid::candid_method(query)]
-fn status_used_heap_size() -> u64 {
-    get_heap_size()
+fn status_used_stable_memory_utilization() -> f64 {
+    status_used_stable_memory() as f64 / (400 * ONE_GB) as f64
 }
 
 fn get_heap_size() -> u64 {

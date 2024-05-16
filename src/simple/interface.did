@@ -22,7 +22,9 @@ service : {
   get_datum : (nat64) -> (Snapshot) query;
   get_last_datum : () -> (opt Snapshot) query;
   get_top_data : (nat64) -> (vec Snapshot) query;
-  status_all : () -> (CanisterStatusResponse) query;
+  status_all : () -> (CanisterStatusResponse);
   status_used_heap_size : () -> (nat64) query;
+  status_used_heap_size_utilization : () -> (float64) query;
   status_used_stable_memory : () -> (nat64) query;
+  status_used_stable_memory_utilization : () -> (float64) query;
 }
